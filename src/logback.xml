@@ -1,0 +1,34 @@
+<configuration>
+
+<!-- 	
+    <appender name="logserver" class="ch.qos.logback.classic.net.HTTPAppender">
+		<Username>sebastian.van-wickern@thyssenkrupp.com</Username>
+		<Password>start123</Password>
+		<BackupFile>${catalina.base}/logs/ipvlogs.dbs</BackupFile>
+		<URL>http://10.143.60.252:8080/clusterlog-tk/HttpServerlet</URL>
+	</appender> -->
+
+
+	<appender name="STDOUT_2" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<file>myApp.log</file>
+
+		<encoder>
+			<pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+
+
+	<root level="WARN">
+		<appender-ref ref="STDOUT_2" />
+		<!-- <appender-ref ref="FILE" />  -->
+	</root>
+</configuration>

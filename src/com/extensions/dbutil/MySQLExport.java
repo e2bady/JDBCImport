@@ -3,7 +3,10 @@ package com.extensions.dbutil;
 
 
 public class MySQLExport extends SQLExport {
-	private static final String prefix = "/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n"+
+	private static final String prefix = "CREATE DATABASE  IF NOT EXISTS `$schemaName`\n"+
+			"/*!40100 DEFAULT CHARACTER SET utf8 */;\n"+
+			"USE `$schemaName`;\n"+
+			"/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n"+
 			"/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;\n"+
 			"/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;\n"+
 			"/*!40101 SET NAMES utf8 */;\n"+
@@ -11,8 +14,8 @@ public class MySQLExport extends SQLExport {
 			"/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n"+
 			"/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n"+
 			"/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;\n";
-	private static final String preTable = "/*!40000 ALTER TABLE `%s` DISABLE KEYS */;\n";
-	private static final String postTable = "/*!40000 ALTER TABLE `%s` ENABLE KEYS */;\n" + 
+	private static final String preTable = "/*!40000 ALTER TABLE `$tableName` DISABLE KEYS */;\n";
+	private static final String postTable = "/*!40000 ALTER TABLE `$tableName` ENABLE KEYS */;\n" + 
 												"UNLOCK TABLES;\n";
 	private static final String postfix = 
 			"/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;\n"+

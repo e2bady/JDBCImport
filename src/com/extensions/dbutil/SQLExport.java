@@ -25,22 +25,22 @@ public class SQLExport {
 
 	public final String mySQLExport(String schema) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getPrefix());
+		sb.append(DBSchemeAnalyser.doFormat(getPrefix(), schema, ""));
 		DBExport dbe = new DBExport(schema);
 		Map<String,List<String>> insertStatements = dbe.createInsertStatements();
 		Map<String, String> createStatements = dbe.generateCreateDrop();
 		for(String tblName : insertStatements.keySet()) {
 			log.error("exporting " + tblName + " ... ");
-			sb.append(String.format(getPretable(), tblName));
+			sb.append(DBSchemeAnalyser.doFormat(getPretable(), schema, tblName));
 			sb.append(createStatements.get(tblName));
 			sb.append('\n');
 			for(String stmt : insertStatements.get(tblName)) {
 				sb.append(stmt);
 				sb.append('\n');
 			}
-			sb.append(String.format(getPosttable(), tblName));
+			sb.append(DBSchemeAnalyser.doFormat(getPosttable(), schema, tblName));
 		}
-		sb.append(getPostfix());
+		sb.append(DBSchemeAnalyser.doFormat(getPostfix(), schema, ""));
 		return sb.toString();
 	}
 

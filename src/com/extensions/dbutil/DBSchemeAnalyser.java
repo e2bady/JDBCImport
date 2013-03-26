@@ -8,14 +8,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.extensions.dbutil.dbcon.DB;
 
 public class DBSchemeAnalyser {
-	private final Logger log = (Logger) LoggerFactory
-			.getLogger(DBSchemeAnalyser.class);
 	private static final String EMPTYSTRING = "";
 	private static final String REPLACEMENT_VARIABLE_TABLENAME = "\\$tableName";
 	private static final String REPLACEMENT_VARIABLE_SCHEMANAME = "\\$schemaName";
@@ -95,10 +90,8 @@ public class DBSchemeAnalyser {
 		return tableNames;
 	}
 	
-	private String doFormat(String toFormat, final String schemaName, final String tableName) {
-		log.error("before: " + toFormat);
+	public static String doFormat(String toFormat, final String schemaName, final String tableName) {
 		toFormat = toFormat.replaceAll(REPLACEMENT_VARIABLE_SCHEMANAME, schemaName).replaceAll(REPLACEMENT_VARIABLE_TABLENAME, tableName);
-		log.error("after: " + toFormat);
 		return toFormat;
 	}
 

@@ -12,6 +12,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.extensions.printingutils.tests.util.PrimitivesCombination;
+import com.extensions.printingutils.tests.util.RandomPrimitivesCombination;
+
 public class PrimitivesCombinationTest {
 	private final PrimitivesCombination pc1 = PrimitivesCombination.createPrimitivesCombination(0, "SomeString");
 	private final PrimitivesCombination pc2 = PrimitivesCombination.createPrimitivesCombination(1, "SomeOtherString", pc1);

@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.extensions.printingutils.tests.util.RandomString;
+
 public class RandomStringTest {
 	private RandomString random;
 	

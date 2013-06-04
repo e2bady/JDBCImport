@@ -1,4 +1,4 @@
-package com.extensions.printingutils.tests;
+package com.extensions.printingutils.tests.util;
 
 public class PrimitivesCombination {
 	public static PrimitivesCombination createPrimitivesCombination(int i,

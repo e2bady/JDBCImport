@@ -1,8 +1,8 @@
-package com.extensions.printingutils.tests;
+package com.extensions.printingutils.tests.util;
 
 import com.extensions.printingutils.Printer;
 
-final class PrimitivesCombinationPrinter implements
+public final class PrimitivesCombinationPrinter implements
 		Printer<PrimitivesCombination> {
 	@Override 
 	  public String print(PrimitivesCombination obj) {

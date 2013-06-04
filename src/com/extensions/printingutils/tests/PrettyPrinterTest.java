@@ -16,6 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import com.extensions.printingutils.PrettyPrinter;
 import com.extensions.printingutils.Printer;
+import com.extensions.printingutils.tests.util.IntegerPrinter;
+import com.extensions.printingutils.tests.util.PrimitivesCombination;
+import com.extensions.printingutils.tests.util.PrimitivesCombinationPrinter;
 
 public class PrettyPrinterTest {
 

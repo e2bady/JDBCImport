@@ -1,4 +1,4 @@
-package com.extensions.printingutils.tests;
+package com.extensions.printingutils.tests.util;
 
 import java.util.Random;
 

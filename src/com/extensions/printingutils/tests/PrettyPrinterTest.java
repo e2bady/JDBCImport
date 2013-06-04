@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,9 @@ public class PrettyPrinterTest {
 		i = 0;
 		for(PrimitivesCombination[] row : primitivesTable) {
 			for(int index = 0; index<row.length;index++) {
-				PrimitivesCombination primitivesCombination = new PrimitivesCombination(i++, Integer.toString(index), new PrimitivesCombination(i++, "Secondary"));
+				PrimitivesCombination primitivesCombination = PrimitivesCombination.createPrimitivesCombination(i++,
+						Integer.toString(index), PrimitivesCombination
+								.createPrimitivesCombination(i++, "Secondary"));
 				List<Integer> lst = new LinkedList<Integer>();
 				for(Integer e : integerTable[index]) {
 					lst.add(e);
@@ -54,12 +57,12 @@ public class PrettyPrinterTest {
 		String printIntegers = PrettyPrinter.print(integerTable);
 		assertTrue("Printed String does not contain lines with equal length", checkRowLength(printIntegers));
 		assertTrue("Printed String does not match assumptions.", checkPrintOut(printIntegers, integerTable, null));
-		log.error("\n" + printIntegers);
+		log.debug("\n" + printIntegers);
 		
 		String printPrimitives = PrettyPrinter.print(primitivesTable);
 		assertTrue("Printed String does not contain lines with equal length", checkRowLength(printPrimitives));
 		assertTrue("Printed String does not match assumptions.", checkPrintOut(printPrimitives, primitivesTable, null));
-		log.error("\n" + printPrimitives);
+		log.debug("\n" + printPrimitives);
 	}
 
 	private <T> boolean checkPrintOut(String printOut, T[][] table, Printer<T> printer) {
@@ -80,7 +83,7 @@ public class PrettyPrinterTest {
 		
 		printOut = trim(printOut).trim();
 		String selfBuild = trim(sb.toString()).trim();
-		log.error("Checking if: " + printOut + " == " + selfBuild);
+		log.debug("Checking if: " + printOut + " == " + selfBuild);
 		return printOut.equals(selfBuild);
 	}
 
@@ -113,8 +116,19 @@ public class PrettyPrinterTest {
 	public final void testPrintMapOfKCollectionOfVPrinterOfKPrinterOfV() {
 		String print = PrettyPrinter.print(map, primitivesPrinter, integerPrinter);
 		assertTrue("Printed String does not contain lines with equal length", checkRowLength(print));
-		
-		log.error("\n" + print);
+		String[][] mapTable = new String[map.size()][];
+		int rowindex = 0;
+		for(PrimitivesCombination key : map.keySet()) {
+			String[] row = new String[map.get(key).size() + 1];
+			row[0] = primitivesPrinter.print(key);
+			Iterator<Integer> iter = map.get(key).iterator();
+			for(int i=1;i<row.length;i++) {
+				row[i] = integerPrinter.print(iter.next());
+			}
+			mapTable[rowindex++] = row;
+		}
+		assertTrue("Printed String does not match assumptions.", checkPrintOut(print, mapTable, null));
+		log.debug("\n" + print);
 	}
 
 	@Test
@@ -122,11 +136,11 @@ public class PrettyPrinterTest {
 		String print = PrettyPrinter.print(integerTable, integerPrinter);
 		assertTrue("Printed String does not contain lines with equal length", checkRowLength(print));
 		assertTrue("Printed String does not match assumptions.", checkPrintOut(print, integerTable, integerPrinter));
-		log.error("\n" + print);
+		log.debug("\n" + print);
 		
 		print = PrettyPrinter.print(primitivesTable,primitivesPrinter);
 		assertTrue("Printed String does not contain lines with equal length", checkRowLength(print));
 		assertTrue("Printed String does not match assumptions.", checkPrintOut(print, primitivesTable, primitivesPrinter));
-		log.error("\n" + print);
+		log.debug("\n" + print);
 	}
 }

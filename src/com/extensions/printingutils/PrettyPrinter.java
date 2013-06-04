@@ -125,5 +125,19 @@ public final class PrettyPrinter {
     private static <T> String getCellValue(T value, Printer<T> printer) {
         return value == null ? DEFAULT_AS_NULL : printer.print(value);
     }
-
+	public static char getBorderKnot() {
+		return BORDER_KNOT;
+	}
+	public static char getHorizontalBorder() {
+		return HORIZONTAL_BORDER;
+	}
+	public static char getVerticalBorder() {
+		return VERTICAL_BORDER;
+	}
+	public static Printer<Object> getDefault() {
+		return DEFAULT;
+	}
+	public static String getDefaultAsNull() {
+		return DEFAULT_AS_NULL;
+	}
 }

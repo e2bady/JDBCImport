@@ -48,14 +48,12 @@ public class dbutiltest {
 						"<redo>INSERT INTO ipadressmanagerdb.userverwaltung (username, password, Aktiviert, Aktivierungskey, PasswortReseted) VALUES (''xtfidm'',48,''true'',null,''false'');</redo>"+
 						"<rollback>DELETE FROM ipadressmanagerdb.userverwaltung WHERE userid = 7;</rollback>"+
 				"</ActionObject>\");");
-		
-		if(strs.length != 3) throw new Exception("sqlSpit not working.");
+		org.junit.Assert.assertEquals("sqlSpit not working.", 3, strs.length);
 		for(String sa : strs) {
 			log.error("SA: " + sa);
-			for(String sb : strs)
-			{
+			for(String sb : strs) {
 				log.error("SB: " + sb);
-				if(!sb.equals(sa)) throw new Exception("sqlSpit not working.");
+				org.junit.Assert.assertTrue("sqlSpit not working.", sb.equals(sa));
 			}
 		}
 	}
@@ -63,7 +61,7 @@ public class dbutiltest {
 	public final void equals() throws Exception {
 		DBExport dbe = new DBExport("ipadressmanagerdb");
 		Map<String, List<Map<String, Object>>> before = dbe.readDB();
-		if(!DBExport.dbequals(before, before)) throw new Exception("dbEquals not working");
+		org.junit.Assert.assertTrue("dbEquals not working", DBExport.dbequals(before, before));
 	}
 
 	@Test
@@ -82,11 +80,11 @@ public class dbutiltest {
 	public final void importSQL() throws Exception {
 		DBExport dbe = new DBExport("ipadressmanagerdb");
 		Map<String, List<Map<String, Object>>> before = dbe.readDB();
-		if(!SQLImport.importSQL(readFile(FILENAME))) throw new Exception("DB Import failed.");
+		org.junit.Assert.assertTrue("DB Import failed.", SQLImport.importSQL(readFile(FILENAME)));
 		export();
 		dbe = new DBExport("ipadressmanagerdb");
 		Map<String, List<Map<String, Object>>> after = dbe.readDB();
-		if(!DBExport.dbequals(before, after)) throw new Exception("IMPORT FAILED.");
+		org.junit.Assert.assertTrue("IMPORT FAILED.", DBExport.dbequals(before, after));
 	}
 	private static String readFile(String path) throws IOException {
 		FileReader fr = null;

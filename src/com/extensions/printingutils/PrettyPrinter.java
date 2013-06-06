@@ -47,7 +47,7 @@ public final class PrettyPrinter {
         }
         if( printer == null ) {
         throw new IllegalArgumentException("No instance of Printer provided");
-        }
+        } 
         final int[] widths = new int[getMaxColumns(table)];
         adjustColumnWidths(table, widths, printer);
         return printPreparedTable(table, widths, getHorizontalBorder(widths), printer);

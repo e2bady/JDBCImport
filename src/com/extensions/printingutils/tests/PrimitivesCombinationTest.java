@@ -67,7 +67,7 @@ public class PrimitivesCombinationTest {
 			map.put(hash, lst);
 		}
 		if(overlaps > (double) (sizeOfHashCodeTest) / 10000.) {
-			fail("HashCode produced to many overlaps for efficient hashing. Maximum is 0.001 %. Overlaps/Size: " + overlaps + " / " + sizeOfHashCodeTest + " = " + 100.*((double) overlaps / (double) map.size()) + " %");
+			fail("HashCode produced to many collisions for efficient hashing. Maximum is 0.001 %. Collitions/Size: " + overlaps + " / " + sizeOfHashCodeTest + " = " + 100.*((double) overlaps / (double) map.size()) + " %");
 		}
 	}
 

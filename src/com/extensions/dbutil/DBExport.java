@@ -11,17 +11,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.extensions.dbutil.dbcon.IDB;
-import com.extensions.printingutils.PrettyPrinter;
 
 public class DBExport implements Export {
-	private static final Logger log = (Logger) LoggerFactory
-			.getLogger(DBExport.class);
+	private static final Logger log = (Logger) LoggerFactory.getLogger(DBExport.class);
 	private final TypeConverter converter;
 	private final String schema;
 	private final SchemeAnalyser analyser;
@@ -128,30 +125,6 @@ public class DBExport implements Export {
 		}
 		return true;
 	}
-	@SuppressWarnings("unused")
-	private void printTable(List<Map<String, Object>> tableEntries,
-			String tablename) {
-		if(tableEntries.size() > 0) { 
-			Set<String> rownames = tableEntries.get(0).keySet();
-			String[][] table = new String[tableEntries.size() + 1][];
-			int j = 0;
-			int i = 0;
-			String[] tr = new String[rownames.size()];
-			for(String rowname : rownames) {
-				tr[i++] = rowname;
-			}
-			table[j++] = tr;
-			for(Map<String, Object> trM : tableEntries) {
-				tr = new String[rownames.size()];
-				i = 0;
-				for(String rowname : rownames) {
-					tr[i++] = (String) (trM.containsKey(rowname) ? (trM.get(rowname) == null ? "NULL" : trM.get(rowname)).toString() : "NULL");
-				}
-				table[j++] = tr;
-			}
-			log.error("Table: " + tablename + "\n" + PrettyPrinter.print(table));
-		}
-	}
 	private List<Map<String, Object>> getAllFor(String tablename, DBField[] fields) {
 		List<Map<String, Object>> lst = new ArrayList<Map<String,Object>>();
 		try {
@@ -185,9 +158,9 @@ public class DBExport implements Export {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof DBExport) {
+		if(obj instanceof Export) {
 			Map<String, List<Map<String, Object>>> d1 = this.readDB();
-			Map<String, List<Map<String, Object>>> d2 = this.readDB();
+			Map<String, List<Map<String, Object>>> d2 = ((Export)obj).readDB();
 			if(!collectionEquals(d1.keySet(), d2.keySet())) return false;
 			for(String key : d1.keySet()) {
 				if(!collectionEquals(d1.get(key), d2.get(key))) return false;

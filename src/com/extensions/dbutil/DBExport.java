@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.extensions.dbutil.dbcon.IDB;
 import com.extensions.printingutils.PrettyPrinter;
 
-public class DBExport {
+public class DBExport implements Export {
 	private static final Logger log = (Logger) LoggerFactory
 			.getLogger(DBExport.class);
 	private final TypeConverter converter;
@@ -34,6 +34,10 @@ public class DBExport {
 		this.analyser = analyser;
 		dbdef = this.analyser.getDBScheme();
 	}
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.Export#generateCreateDrop()
+	 */
+	@Override
 	public Map<String, String> generateCreateDrop() {
 		Map<String, String> map = new HashMap<String, String>(dbdef.keySet().size());
 		for(String tablename : dbdef.keySet()) {
@@ -41,6 +45,10 @@ public class DBExport {
 		}
 		return map;
 	}
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.Export#createInsertStatements()
+	 */
+	@Override
 	public Map<String,List<String>> createInsertStatements() {
 		return generateInserts(readDB());
 	}
@@ -53,46 +61,55 @@ public class DBExport {
 			log.error("preparing " + tablename + " with " + (table != null ? table.size() : 0) + " entries.");
 			if(table != null) {
 				for(Map<String, Object> tr : table) {
-					StringBuilder insertStmt = new StringBuilder("INSERT INTO ");
-					insertStmt.append(schema);
-					insertStmt.append('.');
-					insertStmt.append(tablename);
-					insertStmt.append(" (");
-					int i=0;
-					for(String th : tr.keySet()) {
-						insertStmt.append(th);
-						if(++i < tr.size()) {
-							insertStmt.append(',');
-						}
-					}
-					insertStmt.append(") VALUES (");
-					i=0;
-					for(String th : tr.keySet()) {
-						if(tr.get(th) instanceof String) {
-							insertStmt.append('\'');
-							insertStmt.append(this.db.escapeSql((String)tr.get(th)));
-							insertStmt.append('\'');
-						} else if (tr.get(th) instanceof Date) {
-							insertStmt.append('\'');
-							insertStmt.append(df.format((Date)tr.get(th)));
-							insertStmt.append('\'');
-						}
-						else 
-							insertStmt.append(tr.get(th));
-						if(++i < tr.size()) {
-							insertStmt.append(',');
-						}
-					}
-					insertStmt.append(");");
+					String insertStmt = createInsert(df, tablename, tr);
 					if(!insertStatements.containsKey(tablename)) {
 						insertStatements.put(tablename, new ArrayList<String>());
 					}
-					insertStatements.get(tablename).add(insertStmt.toString());
+					insertStatements.get(tablename).add(insertStmt);
 				}
 			}
 		}
 		return insertStatements;
 	}
+	private String createInsert(DateFormat df, String tablename,
+			Map<String, Object> col2Value) {
+		StringBuilder insertStmt = new StringBuilder("INSERT INTO ");
+		insertStmt.append(schema);
+		insertStmt.append('.');
+		insertStmt.append(tablename);
+		insertStmt.append(" (");
+		int i=0;
+		for(String th : col2Value.keySet()) {
+			insertStmt.append(th);
+			if(++i < col2Value.size()) {
+				insertStmt.append(',');
+			}
+		}
+		insertStmt.append(") VALUES (");
+		i=0;
+		for(String th : col2Value.keySet()) {
+			if(col2Value.get(th) instanceof String) {
+				insertStmt.append('\'');
+				insertStmt.append(this.db.escapeSql((String)col2Value.get(th)));
+				insertStmt.append('\'');
+			} else if (col2Value.get(th) instanceof Date) {
+				insertStmt.append('\'');
+				insertStmt.append(df.format((Date)col2Value.get(th)));
+				insertStmt.append('\'');
+			}
+			else 
+				insertStmt.append(col2Value.get(th));
+			if(++i < col2Value.size()) {
+				insertStmt.append(',');
+			}
+		}
+		insertStmt.append(");");
+		return insertStmt.toString();
+	}
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.Export#readDB()
+	 */
+	@Override
 	public Map<String, List<Map<String, Object>>> readDB() {
 		Map<String, List<Map<String, Object>>> db = new HashMap<String, List<Map<String,Object>>>(dbdef.keySet().size());
 		for(String tablename : dbdef.keySet()) {
@@ -102,7 +119,7 @@ public class DBExport {
 		return db;
 	}
 	
-	private static <E> boolean collectionEquals(Collection<E> keySet, Collection<E> keySet2) {
+	private <E> boolean collectionEquals(Collection<E> keySet, Collection<E> keySet2) {
 		if(keySet.size() != keySet2.size()) {
 			return false;
 		}
@@ -152,6 +169,9 @@ public class DBExport {
 		}
 		return lst;
 	}
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.Export#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -160,6 +180,9 @@ public class DBExport {
 				+ ((analyser == null) ? 0 : analyser.hashCode());
 		return result;
 	}
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.Export#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof DBExport) {

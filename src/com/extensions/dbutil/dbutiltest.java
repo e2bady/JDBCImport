@@ -62,13 +62,13 @@ public class dbutiltest {
 	}
 	@Test
 	public final void equals() throws Exception {
-		DBExport dbe = DBFactory.createMySQLExport(db, IPADRESSMANAGERDB);
+		Export dbe = DBFactory.createMySQLExport(db, IPADRESSMANAGERDB);
 		org.junit.Assert.assertTrue("dbEquals not working", dbe.equals(dbe));
 	}
 
 	@Test
 	public final void export() throws IOException {
-		DBExport dbe = DBFactory.createMySQLExport(db, IPADRESSMANAGERDB);
+		Export dbe = DBFactory.createMySQLExport(db, IPADRESSMANAGERDB);
 		PrintWriter out = null;
 		try {
 			out = new PrintWriter(FILENAME);
@@ -81,10 +81,10 @@ public class dbutiltest {
 	}
 	@Test
 	public final void importSQL() throws Exception {
-		DBExport dbebefore = DBFactory.createMySQLExport(db,IPADRESSMANAGERDB);
+		Export dbebefore = DBFactory.createMySQLExport(db,IPADRESSMANAGERDB);
 		org.junit.Assert.assertTrue("DB Import failed.", new SQLImport().importSQL(readFile(FILENAME)));
 		export();
-		DBExport dbeafter = DBFactory.createMySQLExport(db,IPADRESSMANAGERDB);
+		Export dbeafter = DBFactory.createMySQLExport(db,IPADRESSMANAGERDB);
 		org.junit.Assert.assertTrue("IMPORT FAILED.", dbebefore.equals(dbeafter));
 	}
 	private static String readFile(String path) throws IOException {

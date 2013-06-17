@@ -1,7 +1,6 @@
 package com.extensions.dbutil;
 
-
-
+//TODO change into factory, preformance-wise inheritance is slower.
 public class MySQLExport extends SQLExport {
 	private static final String prefix = "CREATE DATABASE  IF NOT EXISTS `$schemaName`\n"+
 			"/*!40100 DEFAULT CHARACTER SET utf8 */;\n"+

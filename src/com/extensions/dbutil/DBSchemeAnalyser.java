@@ -21,19 +21,8 @@ public class DBSchemeAnalyser extends SQLAnalyser implements SchemeAnalyser {
 	private final String tableCreateSQL;
 	private final String tableCreateColName;
 	private IDB db;
-	public DBSchemeAnalyser(final IDB db, final String schema) {
-		this.schemaName = schema;
-		this.db = db;
-		this.getTablesSQL = "SHOW TABLES IN $schemaName";
-		this.ColNameTablesSQL = "Tables_in_$schemaName";
-		this.getTableDefinitionColType = "Type";
-		this.getTableDefinitionColName = "Field";
-		this.showColumnsSQL = "SHOW COLUMNS IN $tableName IN $schemaName";
-		this.tableCreateSQL = "SHOW CREATE TABLE $schemaName.$tableName;";
-		this.tableCreateColName = "Create Table";
-	}
 	public DBSchemeAnalyser(IDB db, final String schema, final String getTablesSQL, 
-			final String ColNameTablesSQL, final String getColumnsSQL, 
+			final String ColNameTablesSQL,
 			final String showColumnsSQL,
 			final String getTableDefinitionColName, 
 			final String getTableDefinitionColType,

@@ -23,7 +23,7 @@ public class SQLExport extends SQLAnalyser {
 		this.postfix = postfix;
 	}
 
-	public final String mySQLExport(String schema, DBExport dbe) {
+	public final String mySQLExport(String schema, Export dbe) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.doFormat(getPrefix(), schema, ""));
 		Map<String,List<String>> insertStatements = dbe.createInsertStatements();

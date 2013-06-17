@@ -9,19 +9,21 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.extensions.dbutil.dbcon.DB;
+import com.extensions.dbutil.dbcon.IDB;
 
 public class DBASqlBatchImplExecutor implements Runnable {
 	private final Queue<String> queue;
+	private IDB db;
 	private static final Logger LOG = LoggerFactory.getLogger(DBASqlBatchImplExecutor.class);
-	public DBASqlBatchImplExecutor(Queue<String> queue) {
+	public DBASqlBatchImplExecutor(Queue<String> queue, IDB db) {
 		this.queue = queue;
+		this.db = db;
 	}
 	public boolean sqlExec() {
 		String lastStatement = "";
 		List<String> lst = new ArrayList<String>(queue.size());
 		try {
-			Statement stmt = DB.getStatement();
+			Statement stmt = db.getStatement();
 			while(!queue.isEmpty()) {
 				if(LOG.isInfoEnabled()) {
 					LOG.error("Trying to execute: " + queue.peek());

@@ -16,27 +16,50 @@ import org.owasp.esapi.reference.DefaultEncoder;
  * @author XTFIWS
  *
  */
-public class DB {
-	private static DBConnection connection;
-	public static final void setConnection(DBConnectionData connectionData) {
-		connection = new DBConnection(connectionData);
+public class DB implements IDB {
+	private final DBConnection connection;
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.dbcon.IDB#setConnection(com.extensions.dbutil.dbcon.DBConnectionData)
+	 */
+	public DB(DBConnectionData condata) {
+		this.connection = new DBConnection(condata);
 	}
-	private static Encoder encoder = new DefaultEncoder();
-	private static Codec MYSQL_CODEC = new MySQLCodec(MySQLCodec.Mode.ANSI);
-	public static String escapeSql(String str) {
+	private Encoder encoder = new DefaultEncoder();
+	private Codec MYSQL_CODEC = new MySQLCodec(MySQLCodec.Mode.ANSI);
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.dbcon.IDB#escapeSql(java.lang.String)
+	 */
+	@Override
+	public String escapeSql(String str) {
 		return encoder.encodeForSQL(MYSQL_CODEC, str);
 	}
-	public static String descapeSql(String str) {
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.dbcon.IDB#descapeSql(java.lang.String)
+	 */
+	@Override
+	public String descapeSql(String str) {
 		return MYSQL_CODEC.decode(str);
 	}
-	public static Statement getStatement() throws SQLException {
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.dbcon.IDB#getStatement()
+	 */
+	@Override
+	public Statement getStatement() throws SQLException {
 		return connection.getStatement();
 	}
 	
-	public static PreparedStatement getStatement(String sql) throws SQLException {
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.dbcon.IDB#getStatement(java.lang.String)
+	 */
+	@Override
+	public PreparedStatement getStatement(String sql) throws SQLException {
 		return connection.getStatement(sql);
 	}
-	public static Connection getConnection() {
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.dbcon.IDB#getConnection()
+	 */
+	@Override
+	public Connection getConnection() {
 		return connection.getSQLConnection();
 	}
 }

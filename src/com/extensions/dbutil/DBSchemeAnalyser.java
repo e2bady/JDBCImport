@@ -8,12 +8,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.extensions.dbutil.dbcon.DB;
+import com.extensions.dbutil.dbcon.IDB;
 
-public class DBSchemeAnalyser {
+public class DBSchemeAnalyser extends SQLAnalyser implements SchemeAnalyser {
 	private static final String EMPTYSTRING = "";
-	private static final String REPLACEMENT_VARIABLE_TABLENAME = "\\$tableName";
-	private static final String REPLACEMENT_VARIABLE_SCHEMANAME = "\\$schemaName";
 	private final String schemaName;
 	private final String getTablesSQL;
 	private final String ColNameTablesSQL;
@@ -22,8 +20,10 @@ public class DBSchemeAnalyser {
 	private final String showColumnsSQL;
 	private final String tableCreateSQL;
 	private final String tableCreateColName;
-	public DBSchemeAnalyser(final String schema) {
+	private IDB db;
+	public DBSchemeAnalyser(final IDB db, final String schema) {
 		this.schemaName = schema;
+		this.db = db;
 		this.getTablesSQL = "SHOW TABLES IN $schemaName";
 		this.ColNameTablesSQL = "Tables_in_$schemaName";
 		this.getTableDefinitionColType = "Type";
@@ -32,7 +32,7 @@ public class DBSchemeAnalyser {
 		this.tableCreateSQL = "SHOW CREATE TABLE $schemaName.$tableName;";
 		this.tableCreateColName = "Create Table";
 	}
-	public DBSchemeAnalyser(final String schema, final String getTablesSQL, 
+	public DBSchemeAnalyser(IDB db, final String schema, final String getTablesSQL, 
 			final String ColNameTablesSQL, final String getColumnsSQL, 
 			final String showColumnsSQL,
 			final String getTableDefinitionColName, 
@@ -47,7 +47,12 @@ public class DBSchemeAnalyser {
 		this.getTableDefinitionColName = getTableDefinitionColName;
 		this.tableCreateSQL = tableCreateSQL;
 		this.tableCreateColName = tableCreateColName;
+		this.db = db;
 	}
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.SchemeAnalyser#getDBScheme()
+	 */
+	@Override
 	public final Map<String, DBField[]> getDBScheme() {
 		Set<String> tableNames = getTableNames(this.schemaName);
 		Map<String, DBField[]> tblDefs = new HashMap<String, DBField[]>(tableNames.size());
@@ -58,11 +63,14 @@ public class DBSchemeAnalyser {
 		return tblDefs;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.SchemeAnalyser#getTableCreate(java.lang.String)
+	 */
+	@Override
 	public final String getTableCreate(final String tableName) {
 		String sstmt = doFormat(tableCreateSQL, this.schemaName, tableName);
 		try {
-			Statement stmt = com.extensions.dbutil.dbcon.DB.getStatement(
-					sstmt);
+			Statement stmt = db.getStatement(sstmt);
 			ResultSet set = stmt.executeQuery(sstmt);
 			if(set != null && set.next()) {
 				return set.getString(this.tableCreateColName);
@@ -72,6 +80,10 @@ public class DBSchemeAnalyser {
 		}
 		return "";
 	}
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.SchemeAnalyser#getTableDrop(java.lang.String)
+	 */
+	@Override
 	public final String getTableDrop(final String tableName) {
 		return doFormat("DROP TABLE IF EXISTS $schemaName.$tableName;", this.schemaName, tableName);
 	}
@@ -79,7 +91,7 @@ public class DBSchemeAnalyser {
 	private Set<String> getEntries(final String statement , final String colName) {
 		Set<String> tableNames = new HashSet<String>();
 		try {
-			Statement stmt = com.extensions.dbutil.dbcon.DB.getStatement(statement);
+			Statement stmt = db.getStatement(statement);
 			ResultSet set = stmt.executeQuery(statement);
 			while(set != null && set.next()) {
 				tableNames.add(set.getString(colName));
@@ -90,11 +102,6 @@ public class DBSchemeAnalyser {
 		return tableNames;
 	}
 	
-	public static String doFormat(String toFormat, final String schemaName, final String tableName) {
-		toFormat = toFormat.replaceAll(REPLACEMENT_VARIABLE_SCHEMANAME, schemaName).replaceAll(REPLACEMENT_VARIABLE_TABLENAME, tableName);
-		return toFormat;
-	}
-
 	private Set<String> getTableNames(final String schemaName) {
 		return getEntries(doFormat(getTablesSQL, schemaName, EMPTYSTRING), doFormat(ColNameTablesSQL, schemaName, EMPTYSTRING));
 	}
@@ -102,7 +109,7 @@ public class DBSchemeAnalyser {
 		String statement = doFormat(showColumnsSQL,schemaName,tableName);
 		Set<DBField> tableNames = new HashSet<DBField>();
 		try {
-			Statement stmt = DB.getStatement(statement);
+			Statement stmt = db.getStatement(statement);
 			ResultSet set = stmt.executeQuery(statement);
 			while(set != null && set.next()) {
 				DBField f = new DBField();

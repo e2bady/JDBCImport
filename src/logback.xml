@@ -6,7 +6,8 @@
 		<Password>start123</Password>
 		<BackupFile>${catalina.base}/logs/ipvlogs.dbs</BackupFile>
 		<URL>http://10.143.60.252:8080/clusterlog-tk/HttpServerlet</URL>
-	</appender> -->
+	</appender> 
+-->  
 
 
 	<appender name="STDOUT_2" class="ch.qos.logback.core.ConsoleAppender">

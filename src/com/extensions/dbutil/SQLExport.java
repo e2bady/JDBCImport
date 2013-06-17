@@ -6,7 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SQLExport {
+public class SQLExport extends SQLAnalyser {
 	private final String prefix;
 	private final String preTable;
 	private final String postTable;
@@ -23,24 +23,23 @@ public class SQLExport {
 		this.postfix = postfix;
 	}
 
-	public final String mySQLExport(String schema) {
+	public final String mySQLExport(String schema, DBExport dbe) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(DBSchemeAnalyser.doFormat(getPrefix(), schema, ""));
-		DBExport dbe = new DBExport(schema);
+		sb.append(super.doFormat(getPrefix(), schema, ""));
 		Map<String,List<String>> insertStatements = dbe.createInsertStatements();
 		Map<String, String> createStatements = dbe.generateCreateDrop();
 		for(String tblName : insertStatements.keySet()) {
 			log.error("exporting " + tblName + " ... ");
-			sb.append(DBSchemeAnalyser.doFormat(getPretable(), schema, tblName));
+			sb.append(super.doFormat(getPretable(), schema, tblName));
 			sb.append(createStatements.get(tblName));
 			sb.append('\n');
 			for(String stmt : insertStatements.get(tblName)) {
 				sb.append(stmt);
 				sb.append('\n');
 			}
-			sb.append(DBSchemeAnalyser.doFormat(getPosttable(), schema, tblName));
+			sb.append(super.doFormat(getPosttable(), schema, tblName));
 		}
-		sb.append(DBSchemeAnalyser.doFormat(getPostfix(), schema, ""));
+		sb.append(super.doFormat(getPostfix(), schema, ""));
 		return sb.toString();
 	}
 

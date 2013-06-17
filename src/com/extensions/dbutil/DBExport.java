@@ -16,7 +16,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.extensions.dbutil.dbcon.DB;
+import com.extensions.dbutil.dbcon.IDB;
 import com.extensions.printingutils.PrettyPrinter;
 
 public class DBExport {
@@ -24,15 +24,11 @@ public class DBExport {
 			.getLogger(DBExport.class);
 	private final TypeConverter converter;
 	private final String schema;
-	private final DBSchemeAnalyser analyser;
+	private final SchemeAnalyser analyser;
 	private final Map<String, DBField[]> dbdef;
-	public DBExport(String schema) {
-		this.schema = schema;
-		analyser = new DBSchemeAnalyser(schema);
-		converter = new MySQLTypeConverter();//apply default
-		dbdef = this.analyser.getDBScheme();
-	}
-	public DBExport(String schema, TypeConverter converter, DBSchemeAnalyser analyser) {
+	private IDB db;
+	public DBExport(IDB db, String schema, TypeConverter converter, SchemeAnalyser analyser) {
+		this.db = db;
 		this.schema = schema;
 		this.converter = converter;//apply default
 		this.analyser = analyser;
@@ -74,7 +70,7 @@ public class DBExport {
 					for(String th : tr.keySet()) {
 						if(tr.get(th) instanceof String) {
 							insertStmt.append('\'');
-							insertStmt.append(DB.escapeSql((String)tr.get(th)));
+							insertStmt.append(this.db.escapeSql((String)tr.get(th)));
 							insertStmt.append('\'');
 						} else if (tr.get(th) instanceof Date) {
 							insertStmt.append('\'');
@@ -104,14 +100,6 @@ public class DBExport {
 			db.put(tablename, tableEntries);
 		}
 		return db;
-	}
-	
-	public static final boolean dbequals(Map<String, List<Map<String, Object>>> d1, Map<String, List<Map<String, Object>>> d2) {
-		if(!collectionEquals(d1.keySet(), d2.keySet())) return false;
-		for(String key : d1.keySet()) {
-			if(!collectionEquals(d1.get(key), d2.get(key))) return false;
-		}
-		return true;
 	}
 	
 	private static <E> boolean collectionEquals(Collection<E> keySet, Collection<E> keySet2) {
@@ -150,7 +138,7 @@ public class DBExport {
 	private List<Map<String, Object>> getAllFor(String tablename, DBField[] fields) {
 		List<Map<String, Object>> lst = new ArrayList<Map<String,Object>>();
 		try {
-			Statement stmt = DB.getStatement("SELECT * from " + this.schema+"."+tablename);
+			Statement stmt = db.getStatement("SELECT * from " + this.schema+"."+tablename);
 			ResultSet set = stmt.executeQuery("SELECT * from " + this.schema+"."+tablename);
 			while(set != null && set.next()) {
 				Map<String, Object> rowMap = new HashMap<String, Object>();
@@ -163,5 +151,26 @@ public class DBExport {
 			e.printStackTrace();
 		}
 		return lst;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((analyser == null) ? 0 : analyser.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof DBExport) {
+			Map<String, List<Map<String, Object>>> d1 = this.readDB();
+			Map<String, List<Map<String, Object>>> d2 = this.readDB();
+			if(!collectionEquals(d1.keySet(), d2.keySet())) return false;
+			for(String key : d1.keySet()) {
+				if(!collectionEquals(d1.get(key), d2.get(key))) return false;
+			}
+			return true;
+		}
+		return false;
 	}
 }

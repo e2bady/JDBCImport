@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.extensions.dbutil.batchexecutor.datastructure.LimitedCache;
 import com.extensions.dbutil.batchexecutor.datastructure.SqlEntry;
+import com.extensions.dbutil.dbcon.IDB;
 
 public class DBASqlBatchImpl implements DBASqlBatch {
 	private static final Logger LOG = LoggerFactory.getLogger(DBASqlBatchImpl.class);
@@ -19,9 +20,13 @@ public class DBASqlBatchImpl implements DBASqlBatch {
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	private Thread thread = null;
 	private boolean nextExecute;
+	private IDB db;
 	private static List<LimitedCache<Object, SqlEntry>> caches = new ArrayList<LimitedCache<Object, SqlEntry>>();
 	public static void addCache(LimitedCache<Object, SqlEntry> e) {
 		caches.add(e);
+	}
+	public DBASqlBatchImpl(IDB db) {
+		this.db = db;
 	}
 	@Override
 	public void addSql(String sql) {
@@ -54,7 +59,7 @@ public class DBASqlBatchImpl implements DBASqlBatch {
 		lock.writeLock().lock();
 		try {
 			if(!queue.isEmpty()) {
-				thread = new Thread(new DBASqlBatchImplExecutor(this.queue));
+				thread = new Thread(new DBASqlBatchImplExecutor(this.queue,db));
 				thread.start();
 				this.nextExecute = false;
 				this.queue = new ConcurrentLinkedQueue<String>();
@@ -74,7 +79,7 @@ public class DBASqlBatchImpl implements DBASqlBatch {
 		lock.writeLock().lock();
 		try {
 			if(!queue.isEmpty()) {
-				DBASqlBatchImplExecutor exec = new DBASqlBatchImplExecutor(this.queue);
+				DBASqlBatchImplExecutor exec = new DBASqlBatchImplExecutor(this.queue,db);
 				success = exec.sqlExec();
 				this.nextExecute = false;
 				this.queue = new ConcurrentLinkedQueue<String>();

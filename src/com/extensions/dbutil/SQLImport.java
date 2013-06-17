@@ -6,7 +6,7 @@ import java.util.List;
 import com.extensions.dbutil.batchexecutor.DBAFactory;
 
 public class SQLImport {
-	public static boolean importSQL(String sql) {
+	public boolean importSQL(String sql) {
 		String[] stmts = split(sql);
 		for(String s : stmts) {
 			DBAFactory.getBatch().addSql(s);
@@ -14,7 +14,7 @@ public class SQLImport {
 		return DBAFactory.getBatch().forceSyncUpdate();
 	}
 
-	public static String[] split(String sql) {
+	public String[] split(String sql) {
 		List<String> lst =  new LinkedList<String>();
 		int i=0;
 		int lastsplit = 0;

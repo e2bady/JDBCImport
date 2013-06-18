@@ -72,7 +72,7 @@ public class dbutiltest {
 		PrintWriter out = null;
 		try {
 			out = new PrintWriter(FILENAME);
-			out.println(new MySQLExport().mySQLExport(IPADRESSMANAGERDB,dbe));
+			out.println(DBFactory.MySQLExport().mySQLExport(IPADRESSMANAGERDB,dbe));
 		}
 		finally {
 			if(out != null)

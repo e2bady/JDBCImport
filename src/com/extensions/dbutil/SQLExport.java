@@ -6,13 +6,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SQLExport extends SQLAnalyser {
+public class SQLExport extends SQLAnalyser implements ISqlExport {
 	private final String prefix;
 	private final String preTable;
 	private final String postTable;
 	private final String postfix;
 	private final Logger log = (Logger) LoggerFactory
-				.getLogger(MySQLExport.class);
+				.getLogger(SQLExport.class);
 
 	public SQLExport(String prefix, String preTable, String postTable,
 			String postfix) {
@@ -23,6 +23,10 @@ public class SQLExport extends SQLAnalyser {
 		this.postfix = postfix;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.extensions.dbutil.ISqlExport#mySQLExport(java.lang.String, com.extensions.dbutil.Export)
+	 */
+	@Override
 	public final String mySQLExport(String schema, Export dbe) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.doFormat(getPrefix(), schema, ""));

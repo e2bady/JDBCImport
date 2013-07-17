@@ -7,7 +7,7 @@ public class RandomPrimitivesCombination {
 	private final RandomString randomString;
 
 	public RandomPrimitivesCombination(int stringLength) {
-		randomString =  new RandomString(stringLength);
+		randomString = new RandomString(new Random(), new AllowedCharacters(), 20);
 	}
 	
 	public final PrimitivesCombination nextPrimitivesCombination() {

@@ -22,7 +22,6 @@ public class SQLExport extends SQLAnalyser implements ISqlExport {
 		this.postTable = postTable;
 		this.postfix = postfix;
 	}
-
 	/* (non-Javadoc)
 	 * @see com.extensions.dbutil.ISqlExport#mySQLExport(java.lang.String, com.extensions.dbutil.Export)
 	 */
@@ -46,21 +45,16 @@ public class SQLExport extends SQLAnalyser implements ISqlExport {
 		sb.append(super.doFormat(getPostfix(), schema, ""));
 		return sb.toString();
 	}
-
 	private String getPrefix() {
 		return prefix;
 	}
-
 	private String getPretable() {
 		return preTable;
 	}
-
 	private String getPosttable() {
 		return postTable;
 	}
-
 	private String getPostfix() {
 		return postfix;
 	}
-
 }

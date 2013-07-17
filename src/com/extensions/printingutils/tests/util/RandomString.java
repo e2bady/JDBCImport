@@ -2,31 +2,30 @@ package com.extensions.printingutils.tests.util;
 
 import java.util.Random;
 
+import com.extensions.printingutils.tests.util.IAllowedCharacters;
+
 public class RandomString {
-
-	private static final char[] symbols = new char[36];
-
-	static {
-		for (int idx = 0; idx < 10; ++idx)
-			symbols[idx] = (char) ('0' + idx);
-		for (int idx = 10; idx < 36; ++idx)
-			symbols[idx] = (char) ('a' + idx - 10);
-	}
-
-	private final Random random = new Random();
-
+	private final Random random;
+	private IAllowedCharacters characters;
 	private final char[] buf;
 
-	public RandomString(int length) {
+	public RandomString(Random random, IAllowedCharacters characters, int length) {
 		if (length < 1)
 			throw new IllegalArgumentException("length < 1: " + length);
+		if (random == null)
+			throw new IllegalArgumentException("Random may not be null.");
+		if (characters == null)
+			throw new IllegalArgumentException("Characters may not be null.");
+		this.random = random;
+		this.characters = characters;
 		buf = new char[length];
 	}
-
 	public String nextString() {
 		for (int idx = 0; idx < buf.length; ++idx)
-			buf[idx] = symbols[random.nextInt(symbols.length)];
+			buf[idx] = this.characters.get(
+							this.random.nextInt(this.characters.size())
+					   );
 		return new String(buf);
 	}
-
 }
+

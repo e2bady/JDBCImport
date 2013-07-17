@@ -31,12 +31,12 @@ public class dbutiltest {
 	private final IDB db = new DB(condata);
 	
 	@Before
-	public final void setUp() {
+	public void setUp() {
 		DBAFactory.setBatch(db);
 	}
 	
 	@Test
-	public final void sqlSplit() throws Exception {
+	public void sqlSplit() throws Exception {
 		SQLImport sqlImport = new SQLImport();
 		String[] strs = sqlImport.split(
 				"INSERT INTO ipadressmanagerdb.changelog (username,Beschreibung,Action,ChangeID,Date,ActionObject) VALUES (\"xtfiki\",\"user.Add [UserImpl [getUserid()=0, getUsername()=xtfidm, getPassword()=48, isActive()=true, getActivationKey()=null, isPasswordReseted()=false]]\",\"user.Add\",4855,\"2012-10-18 16:16:17\",\"<ActionObject>"+
@@ -61,13 +61,13 @@ public class dbutiltest {
 		}
 	}
 	@Test
-	public final void equals() throws Exception {
+	public void equals() throws Exception {
 		Export dbe = DBFactory.createMySQLExport(db, IPADRESSMANAGERDB);
 		org.junit.Assert.assertTrue("dbEquals not working", dbe.equals(dbe));
 	}
 
 	@Test
-	public final void export() throws IOException {
+	public void export() throws IOException {
 		Export dbe = DBFactory.createMySQLExport(db, IPADRESSMANAGERDB);
 		PrintWriter out = null;
 		try {
@@ -80,7 +80,7 @@ public class dbutiltest {
 		}
 	}
 	@Test
-	public final void importSQL() throws Exception {
+	public void importSQL() throws Exception {
 		Export dbebefore = DBFactory.createMySQLExport(db,IPADRESSMANAGERDB);
 		org.junit.Assert.assertTrue("DB Import failed.", new SQLImport().importSQL(readFile(FILENAME)));
 		export();

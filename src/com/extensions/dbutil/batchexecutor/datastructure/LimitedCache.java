@@ -4,13 +4,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import com.extensions.dbutil.batchexecutor.DBASqlBatch;
 import com.extensions.dbutil.batchexecutor.DBASqlBatchImpl;
 
 public class LimitedCache<K, V extends SqlEntry> implements Map<K, SqlEntry>{
 	private Map<K, SqlEntry> map;
 	@SuppressWarnings("unchecked")
-	public LimitedCache(int maxSize) {
-		map = new LimitedMap<K>(maxSize);
+	public LimitedCache(DBASqlBatch batch, int maxSize) {
+		map = new LimitedMap<K>(batch, maxSize);
 		DBASqlBatchImpl.addCache((LimitedCache<Object, SqlEntry>) this);
 	}
 	@Override

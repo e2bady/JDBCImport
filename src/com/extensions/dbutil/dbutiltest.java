@@ -11,7 +11,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.extensions.dbutil.batchexecutor.DBAFactory;
+import com.extensions.dbutil.batchexecutor.DBASqlBatch;
+import com.extensions.dbutil.batchexecutor.DBASqlBatchImpl;
 import com.extensions.dbutil.dbcon.DB;
 import com.extensions.dbutil.dbcon.DBConnectionData;
 import com.extensions.dbutil.dbcon.IDB;
@@ -29,15 +30,15 @@ public class dbutiltest {
 				IPADRESSMANAGERDB);
 	private static final String FILENAME = "filename.txt";
 	private final IDB db = new DB(condata);
+	DBASqlBatch batch = new DBASqlBatchImpl(db);
 	
 	@Before
 	public void setUp() {
-		DBAFactory.setBatch(db);
 	}
 	
 	@Test
 	public void sqlSplit() throws Exception {
-		SQLImport sqlImport = new SQLImport();
+		SQLImport sqlImport = new SQLImport(batch);
 		String[] strs = sqlImport.split(
 				"INSERT INTO ipadressmanagerdb.changelog (username,Beschreibung,Action,ChangeID,Date,ActionObject) VALUES (\"xtfiki\",\"user.Add [UserImpl [getUserid()=0, getUsername()=xtfidm, getPassword()=48, isActive()=true, getActivationKey()=null, isPasswordReseted()=false]]\",\"user.Add\",4855,\"2012-10-18 16:16:17\",\"<ActionObject>"+
 						"<redo>INSERT INTO ipadressmanagerdb.userverwaltung (username, password, Aktiviert, Aktivierungskey, PasswortReseted) VALUES (''xtfidm'',48,''true'',null,''false'');</redo>"+
@@ -82,7 +83,7 @@ public class dbutiltest {
 	@Test
 	public void importSQL() throws Exception {
 		Export dbebefore = DBFactory.createMySQLExport(db,IPADRESSMANAGERDB);
-		org.junit.Assert.assertTrue("DB Import failed.", new SQLImport().importSQL(readFile(FILENAME)));
+		org.junit.Assert.assertTrue("DB Import failed.", new SQLImport(batch).importSQL(readFile(FILENAME)));
 		export();
 		Export dbeafter = DBFactory.createMySQLExport(db,IPADRESSMANAGERDB);
 		org.junit.Assert.assertTrue("IMPORT FAILED.", dbebefore.equals(dbeafter));

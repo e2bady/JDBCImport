@@ -3,15 +3,20 @@ package com.extensions.dbutil;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.extensions.dbutil.batchexecutor.DBAFactory;
+import com.extensions.dbutil.batchexecutor.DBASqlBatch;
 
 public class SQLImport {
+	private DBASqlBatch batch;
+
+	public SQLImport(DBASqlBatch batch) {
+		this.batch = batch;
+	}
 	public boolean importSQL(String sql) {
 		String[] stmts = split(sql);
 		for(String s : stmts) {
-			DBAFactory.getBatch().addSql(s);
+			this.batch.addSql(s);
 		}
-		return DBAFactory.getBatch().forceSyncUpdate();
+		return this.batch.forceSyncUpdate();
 	}
 
 	public String[] split(String sql) {
